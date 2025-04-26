@@ -1,0 +1,27 @@
+name: Deploy to GitHub
+
+on:
+  workflow_dispatch:
+    inputs:
+      replit_url:
+        description: 'Replit deployment URL'
+        required: true
+        default: 'https://replit.com/@o-yermolenko/replit-mementa-app'
+
+jobs:
+  update-readme:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v2
+      
+      - name: Update README with deployment link
+        run: |
+          echo -e "\n## Live Demo\nThe application is live at: ${{ github.event.inputs.replit_url }}" >> README.md
+          
+      - name: Commit changes
+        run: |
+          git config --local user.email "action@github.com"
+          git config --local user.name "GitHub Action"
+          git add README.md
+          git commit -m "Update README with deployment link" || echo "No changes to commit"
+          git push
